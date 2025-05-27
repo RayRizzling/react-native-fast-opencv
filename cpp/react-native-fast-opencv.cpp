@@ -274,6 +274,30 @@ jsi::Value OpenCVPlugin::get(jsi::Runtime& runtime, const jsi::PropNameID& propN
   }
 
   return jsi::HostObject::get(runtime, propNameId);
+} else if (propName == "putText") {
+  return jsi::Function::createFromHostFunction(
+    runtime, jsi::PropNameID::forAscii(runtime, "putText"), 7,
+    [=](jsi::Runtime& runtime, const jsi::Value& thisValue,
+        const jsi::Value* arguments, size_t count) -> jsi::Value {
+
+      FOCV_FunctionArguments args(runtime, arguments);
+
+      auto text = args.asString(0); // z.B. "Hello"
+      auto mat = args.asMat(1); // cv::Mat, das du übergibst
+      auto x = args.asInt(2); // x Position
+      auto y = args.asInt(3); // y Position
+      auto fontScale = args.asDouble(4);
+      auto color = args.asVec3(5); // z.B. [255, 255, 255]
+      auto thickness = args.asInt(6);
+
+      cv::putText(mat, text, cv::Point(x, y), cv::FONT_HERSHEY_SIMPLEX, fontScale,
+                  cv::Scalar(color[0], color[1], color[2]), thickness);
+
+      return jsi::Value::undefined(); // optional
+    });
+  }
+
+  return jsi::HostObject::get(runtime, propNameId);
 }
 
 std::vector<jsi::PropNameID> OpenCVPlugin::getPropertyNames(jsi::Runtime& runtime) {
@@ -287,6 +311,7 @@ std::vector<jsi::PropNameID> OpenCVPlugin::getPropertyNames(jsi::Runtime& runtim
     result.push_back(jsi::PropNameID::forAscii(runtime, "copyObjectFromVector"));
     result.push_back(jsi::PropNameID::forAscii(runtime, "invoke"));
     result.push_back(jsi::PropNameID::forAscii(runtime, "clearBuffers"));
+    result.push_back(jsi::PropNameID::forAscii(runtime, "putText"));
 
     return result;
 }
