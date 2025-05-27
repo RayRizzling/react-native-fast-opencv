@@ -69,4 +69,14 @@ export type UtilsFunctions = {
   };
 
   inpaint(src: Mat, mask: Mat, dst: Mat, radius: number, flag: unknown): void;
+
+  putText(
+    text: string,
+    mat: Mat,
+    x: number,
+    y: number,
+    fontScale: number,
+    color: [number, number, number],
+    thickness: number
+  ): void;
 };
